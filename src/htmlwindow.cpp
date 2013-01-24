@@ -5,49 +5,58 @@
 #include <QNetworkDiskCache>
 #include <QDesktopServices>
 #include <QMetaObject>
+#include <QApplication>
 #include <QDebug>
 
 
-HtmlWindow::HtmlWindow()
-    : QDialog()
+HtmlWindow::HtmlWindow(QString appUrl)
+    : QWidget()
     , ui(new Ui::HtmlWindow)
+    , m_scriptAPI(new ScriptAPI(this))
+    , m_appUrl(appUrl)
 {
+    qDebug() << appUrl ;
+
     ui->setupUi(this) ;
 
-
-    //WebPage * pWebPage = new WebPage(this) ;
-    //ui->webView->setPage(pWebPage) ;
-
+    // webkit settings
     ui->webView->settings()->setAttribute(QWebSettings::JavascriptEnabled, true);
     ui->webView->settings()->setAttribute(QWebSettings::PluginsEnabled, true);
     ui->webView->settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, true);
     ui->webView->settings()->setAttribute(QWebSettings::JavascriptCanOpenWindows, true);
 
-    // -------------------------------------------------
+    // cache dir -------------------------------------------------
     QNetworkDiskCache *diskCache = new QNetworkDiskCache(this);
     QString location = QDesktopServices::storageLocation(QDesktopServices::CacheLocation);
-    qDebug() << location ;
     diskCache->setCacheDirectory(location);
     ui->webView->page()->networkAccessManager()->setCache(diskCache);
 
-    // -------------------------------------------------
-    ui->webView->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks) ;
-    // connect(ui->webView->page(), SIGNAL(linkClicked(const QUrl &)), this, SLOT(OnLinkClick(const QUrl &)));
+    // webkit events -------------------------------------------------
+    connect(ui->webView->page()->mainFrame(), SIGNAL(loadFinished(bool)), SLOT(onLoadFinished(bool)));
 
-
-    connect(ui->webView, SIGNAL(loadStarted ()), SLOT(onLoadStarted()));
-    connect(ui->webView, SIGNAL(loadFinished (bool)), SLOT(onLoadFinished(bool)));
-    connect(ui->webView->page()->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()), this, SLOT(onPopulateScriptObject()));
+    // load a blank page for app
+    ui->webView->load(QUrl(QApplication::instance()->applicationDirPath()+"/../apps/blank.html")) ;
 }
 
 HtmlWindow::~HtmlWindow()
 {
     delete ui;
+    delete m_scriptAPI;
 }
 
 void HtmlWindow::resize(int w,int h)
 {
-    QDialog::resize(w,h) ;
+    QWidget::resize(w,h) ;
+}
+
+void HtmlWindow::setWindowFlags(int flag)
+{
+    return QWidget::setWindowFlags((Qt::WindowFlags)flag) ;
+}
+
+int HtmlWindow::windowFlags()
+{
+    return (int)QWidget::windowFlags() ;
 }
 
 void HtmlWindow::resizeEvent ( QResizeEvent * e)
@@ -59,7 +68,23 @@ void HtmlWindow::resizeEvent ( QResizeEvent * e)
     QWidget::resizeEvent(e) ;
 }
 
-void HtmlWindow::onPopulateScriptObject()
+QWebView* HtmlWindow::webView()
 {
-    ui->webView->page()->mainFrame()->addToJavaScriptWindowObject("_OS", this);
+    return ui->webView ;
 }
+
+void HtmlWindow::onLoadFinished(bool suc){
+    qDebug() << "OnLoadFinished " << suc ;
+
+    QWebFrame * frame = (QWebFrame *)sender() ;
+
+    // setup kate api
+    m_scriptAPI->setupWebkitScript(frame) ;
+
+    // load framework script
+    m_scriptAPI->require(QApplication::instance()->applicationDirPath()+"/../apps/framework/waf.js");
+
+    // execute app script
+    m_scriptAPI->require(m_appUrl) ;
+}
+

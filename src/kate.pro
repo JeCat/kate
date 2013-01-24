@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui webkit script scripttools network
+QT       += core gui webkit network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -13,15 +13,13 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp \
-    jsapi/qtwidgets.cpp \
-    kateengine.cpp \
-    jsapi/wapper/qdialogwapper.cpp \
-    htmlwindow.cpp
+    htmlwindow.cpp \
+    jsapi/scriptapi.cpp
 
-HEADERS  += \
-    kateengine.h \
-    jsapi/wapper/qdialogwapper.h \
-    htmlwindow.h
+HEADERS += \
+    htmlwindow.h \
+    jsapi/scriptapi.h
 
-FORMS    += \
+FORMS += \
     htmlwindow.ui
+

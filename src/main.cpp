@@ -5,28 +5,17 @@
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
-    HtmlWindow wnd ;
-
-    int runningApps = 0 ;
     for(int i=1;i<argc;i++)
     {
-        qDebug() << argv[i] ;
+        QApplication application(argc, argv);
 
+        HtmlWindow wnd( argv[i] ) ;
         wnd.show() ;
 
-        runningApps++ ;
-        break ;
+        return application.exec() ;
     }
 
-    if(runningApps>0)
-    {
-        return a.exec();
-    }
-    else
-    {
-        qDebug() << "exit, nothing todo" ;
-        return 0 ;
-    }
+    qDebug() << "kate quit, but nothing to do ." ;
+    return 0 ;
 }
 
