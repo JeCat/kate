@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QWebView>
+#include <QWebInspector>
 
 namespace Ui {
     class HtmlWindow;
@@ -15,22 +16,23 @@ class HtmlWindow : public QWidget
     Q_OBJECT
     
 public:
-    explicit HtmlWindow(QString);
+    explicit HtmlWindow(QString,ScriptAPI*,int);
     ~HtmlWindow();
 
     void resizeEvent ( QResizeEvent * e) ;
     QWebView* webView() ;
+    int id ;
+    QWebFrame* mainFrame() ;
+    QWebInspector*inspector() ;
 
 public slots:
-    void resize(int w,int h) ;
-    void setWindowFlags(int) ;
-    int windowFlags() ;
     void onLoadFinished(bool) ;
 
 private:
     Ui::HtmlWindow *ui;
-    ScriptAPI * m_scriptAPI ;
     QString m_appUrl ;
+    ScriptAPI* m_api ;
+    QWebInspector * m_inspector ;
 };
 
 #endif // HTMLWINDOW_H

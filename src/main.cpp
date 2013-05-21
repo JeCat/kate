@@ -5,17 +5,22 @@
 
 int main(int argc, char *argv[])
 {
-    for(int i=1;i<argc;i++)
+    QList<HtmlWindow*> windowPool ;
+    ScriptAPI api(&windowPool) ;
+    QApplication application(argc, argv);
+
+    if(argc>1)
     {
-        QApplication application(argc, argv);
-
-        HtmlWindow wnd( argv[i] ) ;
-        wnd.show() ;
-
-        return application.exec() ;
+        for(int i=1;i<argc;i++)
+        {
+            api.createWindow(QVariant(argv[i])) ;
+        }
+    }
+    else
+    {
+        api.createWindow(QVariant(application.applicationDirPath()+"/../app/index.html")) ;
     }
 
-    qDebug() << "kate quit, but nothing to do ." ;
-    return 0 ;
+    return application.exec() ;
 }
 

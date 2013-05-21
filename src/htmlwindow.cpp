@@ -9,11 +9,13 @@
 #include <QDebug>
 
 
-HtmlWindow::HtmlWindow(QString appUrl)
+HtmlWindow::HtmlWindow(QString appUrl,ScriptAPI*api,int id)
     : QWidget()
     , ui(new Ui::HtmlWindow)
-    , m_scriptAPI(new ScriptAPI(this))
     , m_appUrl(appUrl)
+    , m_api(api)
+    , id(id)
+    , m_inspector(NULL)
 {
     qDebug() << appUrl ;
 
@@ -32,31 +34,21 @@ HtmlWindow::HtmlWindow(QString appUrl)
     ui->webView->page()->networkAccessManager()->setCache(diskCache);
 
     // webkit events -------------------------------------------------
-    connect(ui->webView->page()->mainFrame(), SIGNAL(loadFinished(bool)), SLOT(onLoadFinished(bool)));
+    connect(mainFrame(), SIGNAL(loadFinished(bool)), SLOT(onLoadFinished(bool)));
 
     // load a blank page for app
-    ui->webView->load(QUrl(QApplication::instance()->applicationDirPath()+"/../apps/blank.html")) ;
+    ui->webView->load(QUrl(appUrl)) ;
 }
 
 HtmlWindow::~HtmlWindow()
 {
     delete ui;
-    delete m_scriptAPI;
 }
 
-void HtmlWindow::resize(int w,int h)
-{
-    QWidget::resize(w,h) ;
-}
-
-void HtmlWindow::setWindowFlags(int flag)
-{
-    return QWidget::setWindowFlags((Qt::WindowFlags)flag) ;
-}
-
-int HtmlWindow::windowFlags()
-{
-    return (int)QWidget::windowFlags() ;
+void HtmlWindow::onLoadFinished(bool suc){
+    qDebug() << "OnLoadFinished " << suc ;
+    QWebFrame * frame = (QWebFrame *)sender() ;
+    m_api->setupWebkitScript(this,frame) ;
 }
 
 void HtmlWindow::resizeEvent ( QResizeEvent * e)
@@ -73,18 +65,19 @@ QWebView* HtmlWindow::webView()
     return ui->webView ;
 }
 
-void HtmlWindow::onLoadFinished(bool suc){
-    qDebug() << "OnLoadFinished " << suc ;
+QWebFrame* HtmlWindow::mainFrame()
+{
+    return ui->webView->page()->mainFrame() ;
+}
 
-    QWebFrame * frame = (QWebFrame *)sender() ;
-
-    // setup kate api
-    m_scriptAPI->setupWebkitScript(frame) ;
-
-    // load framework script
-    m_scriptAPI->require(QApplication::instance()->applicationDirPath()+"/../apps/framework/waf.js");
-
-    // execute app script
-    m_scriptAPI->require(m_appUrl) ;
+QWebInspector* HtmlWindow::inspector()
+{
+    if(!m_inspector)
+    {
+        m_inspector = new QWebInspector;
+        m_inspector->setPage(webView()->page());
+        m_inspector->show() ;
+    }
+    return m_inspector ;
 }
 

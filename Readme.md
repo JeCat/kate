@@ -1,0 +1,1 @@
+Kate 是一个 Qt/WebKit 实现的Html5桌面开发方案
