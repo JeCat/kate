@@ -14,12 +14,15 @@ TEMPLATE = app
 
 SOURCES += main.cpp \
     htmlwindow.cpp \
-    jsapi/scriptapi.cpp
+    jsapi/scriptapi.cpp \
+    screenshoter.cpp
 
 HEADERS += \
     htmlwindow.h \
-    jsapi/scriptapi.h
+    jsapi/scriptapi.h \
+    screenshoter.h
 
 FORMS += \
-    htmlwindow.ui
+    htmlwindow.ui \
+    screenshoter.ui
 

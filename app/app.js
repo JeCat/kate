@@ -16,6 +16,10 @@ function onKateLoaded()
 		secondWindow.show() ;
 	}) ;
 
+	$("#btnShotScreen").click(function(){
+		kate.shotScreen() ;
+	}) ;
+
 	$("#btnRead").click(function(){
 		if( !secondWindow )
 		{

@@ -4,12 +4,11 @@
 #include <QWidget>
 #include <QWebView>
 #include <QWebInspector>
+#include "jsapi/scriptapi.h"
 
 namespace Ui {
     class HtmlWindow;
 }
-
-#include "jsapi/scriptapi.h"
 
 class HtmlWindow : public QWidget
 {
@@ -34,5 +33,7 @@ private:
     ScriptAPI* m_api ;
     QWebInspector * m_inspector ;
 };
+
+
 
 #endif // HTMLWINDOW_H

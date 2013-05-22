@@ -5,10 +5,16 @@
 #include <QFile>
 #include <QApplication>
 
-ScriptAPI::ScriptAPI(QList<HtmlWindow*> * pWindowPool)
+ScriptAPI::ScriptAPI()
     : QObject()
-    , m_pWindowPool(pWindowPool)
+    , m_pWindowPool(new QList<HtmlWindow*>)
+    , screenshoter(new ScreenShoter(NULL))
 {}
+ScriptAPI::~ScriptAPI()
+{
+    delete m_pWindowPool ;
+    delete screenshoter ;
+}
 
 #define loadscript(url) \
     frame->evaluateJavaScript(\
@@ -37,6 +43,7 @@ QVariant ScriptAPI::createWindow(QVariant url)
 
     HtmlWindow * wnd = new HtmlWindow(url.toString(),this,m_pWindowPool->length()) ;
     m_pWindowPool->append(wnd) ;
+    wnd->show() ;
 
     return QVariant(wnd->id) ;
 }
@@ -123,4 +130,9 @@ QVariant ScriptAPI::eval(QVariant wndId,QString code)
 {
     getHtmlWnd(QVariant())
     return wnd->mainFrame()->evaluateJavaScript(code) ;
+}
+
+void ScriptAPI::shotScreen()
+{
+    screenshoter->grapWindowScreen();
 }

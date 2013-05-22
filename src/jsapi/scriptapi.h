@@ -3,6 +3,8 @@
 
 #include <QObject>
 #include <QWebFrame>
+#include "screenshoter.h"
+
 
 class HtmlWindow ;
 
@@ -11,7 +13,8 @@ class ScriptAPI : public QObject
     Q_OBJECT
 
 public:
-    ScriptAPI(QList<HtmlWindow*> *) ;
+    ScriptAPI() ;
+    ~ScriptAPI() ;
 
     void setupWebkitScript(HtmlWindow*,QWebFrame *) ;
 
@@ -28,9 +31,13 @@ public slots:
     QVariant windowFlags(QVariant wndId) ;
     void inspector(QVariant wndId) ;
     QVariant eval(QVariant wndId,QString) ;
+    void shotScreen() ;
+
+
 
 private:
     QList<HtmlWindow*> * m_pWindowPool ;
+    ScreenShoter * screenshoter ;
 };
 
 #include "../htmlwindow.h"
