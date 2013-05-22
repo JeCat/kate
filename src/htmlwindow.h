@@ -21,8 +21,10 @@ public:
     void resizeEvent ( QResizeEvent * e) ;
     QWebView* webView() ;
     int id ;
+    int parentId ;
     QWebFrame* mainFrame() ;
     QWebInspector*inspector() ;
+
 
 public slots:
     void onLoadFinished(bool) ;

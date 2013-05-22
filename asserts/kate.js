@@ -3,14 +3,22 @@
 	var kate = window.kate = {
 		
 		window: new KateHtmlWindow(kateapi.wndId)
+		, parentWindow: kateapi.parentWndId>-1? new KateHtmlWindow(kateapi.parentWndId): undefined
 
 		, appFolder: kateapi.appFolder
 		
 		, createWindow: function(url)
 		{
-			return new KateHtmlWindow( kateapi.createWindow(url) ) ;
+			return new KateHtmlWindow( kateapi.createWindow(url,this.wndId) ) ;
+		}
+
+		, touchWindow: function(wndId)
+		{
+			return new KateHtmlWindow(wndId) ;
 		}
 	}
+
+
 
 	kate.__proto__ = kateapi ;
 
@@ -54,6 +62,19 @@
 	{
 		args = args===undefined? "[]": JSON.stringify(args) ;
 		return kateapi.eval(this.wndId,funcName+".apply(null,"+args+")") ;
+	}
+	KateHtmlWindow.prototype.var = function(varName,value)
+	{
+		if( value===undefined )
+		{
+			return kateapi.eval(this.wndId,"return "+varName+";") ;
+		}
+		else
+		{
+			value = JSON.stringify(value) ;
+			kateapi.eval(this.wndId,varName+"="+value+";") ;
+			return value ;
+		}
 	}
 
 

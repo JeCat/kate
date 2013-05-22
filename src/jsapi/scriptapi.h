@@ -20,7 +20,7 @@ public:
 
 public slots:
     void require(QString) ;
-    QVariant createWindow(QVariant) ;
+    QVariant createWindow(QVariant,int parentWndId=-1) ;
     void show(QVariant wndId) ;
     void hide(QVariant wndId) ;
 

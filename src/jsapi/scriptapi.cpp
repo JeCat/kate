@@ -31,17 +31,19 @@ void ScriptAPI::setupWebkitScript(HtmlWindow* wnd,QWebFrame * frame)
 
     frame->addToJavaScriptWindowObject("kateapi",this) ;
     frame->evaluateJavaScript(QString("kateapi.wndId = %1 ;").arg(wnd->id)) ;
+    frame->evaluateJavaScript(QString("kateapi.parentWndId = %1 ;").arg(wnd->parentId)) ;
     frame->evaluateJavaScript(QString("kateapi.appFolder = \"%1\";").arg(appFolder)) ;
 
     loadscript(folder+"/../asserts/kate.js") ;
 }
 
 
-QVariant ScriptAPI::createWindow(QVariant url)
+QVariant ScriptAPI::createWindow(QVariant url,int parentId)
 {
     qDebug() << "create html window by url :" << url.toString() ;
 
     HtmlWindow * wnd = new HtmlWindow(url.toString(),this,m_pWindowPool->length()) ;
+    wnd->parentId = parentId ;
     m_pWindowPool->append(wnd) ;
     wnd->show() ;
 

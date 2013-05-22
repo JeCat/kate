@@ -4,9 +4,13 @@ function onKateLoaded()
 {
 	// 按钮事件
 	$("#btnOpenConsole").click(function(){
-		alert(kateapi.wndId) ;
 		kateapi.inspector(kateapi.wndId) ;
-		//kate.window.inspector() ;
+	}) ;
+
+
+	$("#btnCallParentWindow").click(function(){
+		var value = $("[name=num]").val() ;
+		kate.parentWindow.call("fromChildWindow",[value]) ;
 	}) ;
 
 

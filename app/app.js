@@ -30,3 +30,8 @@ function onKateLoaded()
 		alert( secondWindow.call("getValue",[1,2,3]) ) ;
 	}) ;
 }
+
+fromChildWindow = function(value)
+{
+	alert("子窗口传来的参数："+value) ;
+}

@@ -16,6 +16,7 @@ HtmlWindow::HtmlWindow(QString appUrl,ScriptAPI*api,int id)
     , m_api(api)
     , id(id)
     , m_inspector(NULL)
+    , parentId(-1)
 {
     qDebug() << appUrl ;
 
