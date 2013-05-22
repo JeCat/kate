@@ -19,10 +19,10 @@ function onKateLoaded()
 	$("#btnRead").click(function(){
 		if( !secondWindow )
 		{
-			alert("窗口还没有打开") ;
+			alert("第二个窗口还没有打开") ;
 			return ;
 		}
 
-		alert( secondWindow.call("getValue") ) ;
+		alert( secondWindow.call("getValue",[1,2,3]) ) ;
 	}) ;
 }

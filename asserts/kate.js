@@ -50,8 +50,8 @@
 	}
 	KateHtmlWindow.prototype.call = function(funcName,args)
 	{
-		args = args===undefined? "undefined": JSON.stringify(args) ;
-		return kateapi.eval(this.wndId,"funcName.apply(null,"+args+")") ;
+		args = args===undefined? "[]": JSON.stringify(args) ;
+		return kateapi.eval(this.wndId,funcName+".apply(null,"+args+")") ;
 	}
 
 
