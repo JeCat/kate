@@ -12,6 +12,8 @@
 		}
 	}
 
+	kate.__proto__ = kateapi ;
+
 	function KateHtmlWindow(wndId)
 	{
 		this.wndId = wndId ;
