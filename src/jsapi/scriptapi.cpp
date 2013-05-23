@@ -45,7 +45,7 @@ QVariant ScriptAPI::createWindow(QVariant url,int parentId)
     HtmlWindow * wnd = new HtmlWindow(url.toString(),this,m_pWindowPool->length()) ;
     wnd->parentId = parentId ;
     m_pWindowPool->append(wnd) ;
-    wnd->show() ;
+    //wnd->show() ;
 
     return QVariant(wnd->id) ;
 }
@@ -83,12 +83,15 @@ void ScriptAPI::require(QString url)
 
 void ScriptAPI::show(QVariant wndId)
 {
+    //qDebug() << "show()" << wndId << m_pWindowPool->length() ;
+
     getHtmlWnd()
     wnd->show() ;
 }
 
 void ScriptAPI::hide(QVariant wndId)
 {
+    //qDebug() << "hide()" << wndId << m_pWindowPool->length() ;
     getHtmlWnd()
     wnd->hide() ;
 }
