@@ -141,3 +141,15 @@ void ScriptAPI::shotScreen()
 {
     screenshoter->grapWindowScreen();
 }
+
+void ScriptAPI::setTitle(QVariant wndId,QString title)
+{
+    getHtmlWnd()
+    wnd->setWindowTitle(title);
+}
+
+QVariant ScriptAPI::title(QVariant wndId)
+{
+    getHtmlWnd(QVariant())
+    return wnd->windowTitle();
+}

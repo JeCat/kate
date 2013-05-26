@@ -32,6 +32,8 @@ public slots:
     void inspector(QVariant wndId) ;
     QVariant eval(QVariant wndId,QString) ;
     void shotScreen() ;
+    void setTitle(QVariant wndId,QString) ;
+    QVariant title(QVariant wndId) ;
 
 
 
