@@ -34,6 +34,7 @@ public slots:
     void shotScreen() ;
     void setTitle(QVariant wndId,QString) ;
     QVariant title(QVariant wndId) ;
+    void playSound(QString) ;
 
 
 

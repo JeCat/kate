@@ -4,6 +4,7 @@
 #include <QWebInspector>
 #include <QFile>
 #include <QApplication>
+#include <QSound>
 
 ScriptAPI::ScriptAPI()
     : QObject()
@@ -152,4 +153,10 @@ QVariant ScriptAPI::title(QVariant wndId)
 {
     getHtmlWnd(QVariant())
     return wnd->windowTitle();
+}
+
+void ScriptAPI::playSound(QString mediaPath)
+{
+    qDebug() << mediaPath ;
+    QSound::play(mediaPath);
 }
