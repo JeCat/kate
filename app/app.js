@@ -3,6 +3,7 @@ function onKateLoaded()
 {
 	// 显示窗口 (默认是不显示窗口的)
 	kate.window.show() ;
+	kate.window.resize(500,500) ;
 
 	var secondWindow ;
 

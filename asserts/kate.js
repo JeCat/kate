@@ -1,5 +1,10 @@
 (function(window){
 
+	// 默认的全局键盘事件
+	window.onKateGlobalKeyEvent = function(keys){
+		console.log(keys) ;
+	}
+
 	var kate = window.kate = {
 		
 		window: new KateHtmlWindow(kateapi.wndId)
@@ -31,6 +36,10 @@
 	KateHtmlWindow.prototype.hide = function()
 	{
 		return kateapi.hide(this.wndId) ;
+	}
+	KateHtmlWindow.prototype.close = function()
+	{
+		return kateapi.close(this.wndId) ;
 	}
 	KateHtmlWindow.prototype.resize = function(w,h)
 	{
@@ -74,6 +83,39 @@
 			return value ;
 		}
 	}
+	KateHtmlWindow.prototype.posX = function()
+	{
+		return kateapi.wndPosX(this.wndId) ;
+	}
+	KateHtmlWindow.prototype.posY = function()
+	{
+		return kateapi.wndPosY(this.wndId) ;
+	}
+	KateHtmlWindow.prototype.move = function(x,y)
+	{
+		return kateapi.move(this.wndId,x,y) ;
+	}
+	KateHtmlWindow.prototype.drag = function(y)
+	{
+		return kateapi.drag(this.wndId) ;
+	}
+	KateHtmlWindow.prototype.regGlobalKeyEvent = function(keys)
+	{
+		return kateapi.regGlobalKeyEvent(this.wndId,keys) ;
+	}
+	KateHtmlWindow.prototype.minimize = function()
+	{
+		return kateapi.minimize(this.wndId) ;
+	}
+	KateHtmlWindow.prototype.maximize = function()
+	{
+		return kateapi.maximize(this.wndId) ;
+	}
+	KateHtmlWindow.prototype.normal = function()
+	{
+		return kateapi.normal(this.wndId) ;
+	}
+	
 
 
 
@@ -415,13 +457,5 @@ if (typeof JSON !== 'object') {
 // These forms are obsolete. It is recommended that JSON.stringify and
 // JSON.parse be used instead.
 
-    if (!Object.prototype.toJSONString) {
-        Object.prototype.toJSONString = function (filter) {
-            return JSON.stringify(this, filter);
-        };
-        Object.prototype.parseJSON = function (filter) {
-            return JSON.parse(this, filter);
-        };
-    }
 }());
 

@@ -5,16 +5,29 @@
 #include <QFile>
 #include <QApplication>
 #include <QSound>
+#include <windowsx.h>
+#include "qxtglobalshortcut.h"
+
+#define getHtmlWnd(ret) \
+    int nWndId = wndId.toInt() ; \
+    if( nWndId>=m_pWindowPool->length() ) \
+    {\
+        return ret;\
+    }\
+    HtmlWindow * wnd = m_pWindowPool->at(nWndId) ;\
+
 
 ScriptAPI::ScriptAPI()
     : QObject()
     , m_pWindowPool(new QList<HtmlWindow*>)
     , screenshoter(new ScreenShoter(NULL))
+    , draggingWindow(NULL)
 {}
 ScriptAPI::~ScriptAPI()
 {
     delete m_pWindowPool ;
     delete screenshoter ;
+
 }
 
 #define loadscript(url) \
@@ -51,6 +64,41 @@ QVariant ScriptAPI::createWindow(QVariant url,int parentId)
     return QVariant(wnd->id) ;
 }
 
+HtmlWindow * ScriptAPI::htmlWindow(int wndId)
+{
+    return m_pWindowPool->at(wndId) ;
+}
+
+
+void ScriptAPI::drag(QVariant wndId)
+{
+    getHtmlWnd()
+    draggingWindow = wnd ;
+    preMousePos = QCursor::pos();//获取当前光标的位置
+}
+
+void ScriptAPI::onMouseMoving(int x,int y )
+{
+    if(!draggingWindow)
+    {
+        return ;
+    }
+
+    QPoint pos = draggingWindow->pos() ;
+    draggingWindow->move(
+        pos.x() + x-preMousePos.x()
+        , pos.y() + y-preMousePos.y()
+    );
+
+    preMousePos.setX(x);
+    preMousePos.setY(y);
+}
+void ScriptAPI::onMouseUp()
+{
+    draggingWindow = NULL ;
+}
+
+
 void ScriptAPI::require(QString url)
 {
 
@@ -73,13 +121,6 @@ void ScriptAPI::require(QString url)
 //    m_window->webView()->page()->mainFrame()->evaluateJavaScript(code) ;
 }
 
-#define getHtmlWnd(ret) \
-    int nWndId = wndId.toInt() ; \
-    if( nWndId>=m_pWindowPool->length() ) \
-    {\
-        return ret;\
-    }\
-    HtmlWindow * wnd = m_pWindowPool->at(nWndId) ;\
 
 
 void ScriptAPI::show(QVariant wndId)
@@ -95,6 +136,30 @@ void ScriptAPI::hide(QVariant wndId)
     //qDebug() << "hide()" << wndId << m_pWindowPool->length() ;
     getHtmlWnd()
     wnd->hide() ;
+}
+void ScriptAPI::close(QVariant wndId)
+{
+    //qDebug() << "hide()" << wndId << m_pWindowPool->length() ;
+    getHtmlWnd()
+    wnd->close() ;
+}
+void ScriptAPI::minimize(QVariant wndId)
+{
+    //qDebug() << "hide()" << wndId << m_pWindowPool->length() ;
+    getHtmlWnd()
+    wnd->showMinimized() ;
+}
+void ScriptAPI::maximize(QVariant wndId)
+{
+    //qDebug() << "hide()" << wndId << m_pWindowPool->length() ;
+    getHtmlWnd()
+    wnd->showMaximized() ;
+}
+void ScriptAPI::normal(QVariant wndId)
+{
+    //qDebug() << "hide()" << wndId << m_pWindowPool->length() ;
+    getHtmlWnd()
+    wnd->showNormal() ;
 }
 
 QVariant ScriptAPI::width(QVariant wndId)
@@ -160,3 +225,28 @@ void ScriptAPI::playSound(QString mediaPath)
     qDebug() << mediaPath ;
     QSound::play(mediaPath);
 }
+
+
+int ScriptAPI::wndPosX(QVariant wndId)
+{
+    getHtmlWnd(-1)
+    return wnd->pos().x() ;
+}
+
+int ScriptAPI::wndPosY(QVariant wndId)
+{
+    getHtmlWnd(-1)
+    return wnd->pos().y() ;
+}
+void ScriptAPI::move(QVariant wndId,int x,int y)
+{
+    getHtmlWnd()
+    wnd->move(QPoint(x,y));
+}
+void ScriptAPI::regGlobalKeyEvent(QVariant wndId,QString keySqu)
+{
+    getHtmlWnd()
+    QxtGlobalShortcut * sc = new QxtGlobalShortcut(QKeySequence(keySqu), this);
+    connect(sc, SIGNAL(activated()),wnd, SLOT(keyEvent()));
+}
+

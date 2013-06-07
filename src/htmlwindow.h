@@ -25,9 +25,9 @@ public:
     QWebFrame* mainFrame() ;
     QWebInspector*inspector() ;
 
-
 public slots:
     void onLoadFinished(bool) ;
+    void keyEvent() ;
 
 private:
     Ui::HtmlWindow *ui;
