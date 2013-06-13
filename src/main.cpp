@@ -42,36 +42,36 @@ int main(int argc, char *argv[])
     qDebug() << "localeStorage path:" << QDesktopServices::storageLocation(QDesktopServices::DataLocation)+"\\kate-localeStorage.dat" ;
 
     bool autoshow = false ;
-    int wnds = 0 ;
+    QString app("") ;
+    qDebug() << argc ;
     for(int i=1;i<argc;i++)
     {
         if(QString(argv[i])=="--show")
         {
             autoshow = true ;
         }
-        else
+        else if(QString(argv[i])=="--app")
         {
-            wnds ++ ;
-        }
-    }
-
-    if(wnds)
-    {
-        for(int i=1;i<argc;i++)
-        {
-            if(QString(argv[i])!="--show")
+            if(argc>++i)
             {
-                int wndId = api->createWindow(QVariant(argv[i])).toInt() ;
-                if(autoshow)
-                {
-                    api->htmlWindow(wndId)->show() ;
-                }
+                app = argv[i] ;
             }
         }
     }
-    else
+
+    // default app path
+    if(!app.length())
     {
-        api->createWindow(QVariant(application.applicationDirPath()+"/../app/index.html")) ;
+        app = application.applicationDirPath()+"/../app/index.html" ;
+    }
+
+    // create first window
+    int wndId = api->createWindow(QVariant(app)).toInt() ;
+
+    // auto show it
+    if(autoshow)
+    {
+        api->htmlWindow(wndId)->show() ;
     }
 
     int ret = application.exec() ;
