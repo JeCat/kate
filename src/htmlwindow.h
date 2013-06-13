@@ -25,9 +25,14 @@ public:
     QWebFrame* mainFrame() ;
     QWebInspector*inspector() ;
 
+    bool startLocalServer(QString) ;
+
 public slots:
     void onLoadFinished(bool) ;
     void keyEvent() ;
+
+    void localServerNewConnection() ;
+    void localServerReadyRead() ;
 
 private:
     Ui::HtmlWindow *ui;

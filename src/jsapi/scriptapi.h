@@ -37,6 +37,9 @@ public slots:
     void maximize(QVariant wndId) ;
     void normal(QVariant wndId) ;
 
+    QVariant argvs() ;
+    void exit() ;
+
     void resize(QVariant wndId,int w,int h) ;
     QVariant width(QVariant wndId) ;
     QVariant height(QVariant wndId) ;
@@ -56,7 +59,8 @@ public slots:
 
     void drag(QVariant wndId) ;
 
-
+    bool startLocalServer(QVariant,QString) ;
+    bool sendToLocalServer(QString,QString) ;
 
 private:
     QList<HtmlWindow*> * m_pWindowPool ;

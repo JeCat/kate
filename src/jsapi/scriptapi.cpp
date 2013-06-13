@@ -8,6 +8,10 @@
 #include <windowsx.h>
 #include "qxtglobalshortcut.h"
 
+#include <QLocalSocket>
+#include <stdlib.h>
+#include <unistd.h>
+
 #define getHtmlWnd(ret) \
     int nWndId = wndId.toInt() ; \
     if( nWndId>=m_pWindowPool->length() ) \
@@ -250,3 +254,36 @@ void ScriptAPI::regGlobalKeyEvent(QVariant wndId,QString keySqu)
     connect(sc, SIGNAL(activated()),wnd, SLOT(keyEvent()));
 }
 
+bool ScriptAPI::startLocalServer(QVariant wndId,QString name)
+{
+    getHtmlWnd(false)
+    return wnd->startLocalServer(name);
+}
+
+bool ScriptAPI::sendToLocalServer(QString name,QString data)
+{
+    QLocalSocket ls;
+    ls.connectToServer(name);
+    if(ls.waitForConnected())
+    {
+        QTextStream ts(&ls);
+        ts << data ;
+        ts.flush();
+        ls.waitForBytesWritten();
+        return true ;
+    }
+    else
+    {
+        return false ;
+    }
+}
+void ScriptAPI::exit()
+{
+    QApplication::instance()->exit(0) ;
+}
+
+
+QVariant ScriptAPI::argvs()
+{
+    return QApplication::instance()->arguments() ;
+}

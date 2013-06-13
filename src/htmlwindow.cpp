@@ -9,6 +9,8 @@
 #include <QDebug>
 #include "qxtglobalshortcut.h"
 #include "networkcookiejar.h"
+#include <QLocalServer>
+#include <QLocalSocket>
 
 HtmlWindow::HtmlWindow(QString appUrl,ScriptAPI*api,int id)
     : QWidget()
@@ -103,3 +105,80 @@ void HtmlWindow::keyEvent()
     mainFrame()->evaluateJavaScript(code) ;
 }
 
+bool HtmlWindow::startLocalServer(QString name)
+{
+    QLocalServer * server = new QLocalServer(this) ;
+    bool res = server->listen(name);
+    connect(server, SIGNAL(newConnection()), this, SLOT(localServerNewConnection()));
+
+    qDebug() << "local server start" ;
+
+    return res ;
+}
+
+void HtmlWindow::localServerNewConnection()
+{
+    qDebug() << "a new local server connection come in" ;
+
+    QLocalServer * server = (QLocalServer *)sender() ;
+    QLocalSocket * newsocket = server->nextPendingConnection();
+
+    qDebug() << "pending client" ;
+    newsocket->setObjectName(server->serverName()) ;
+
+    connect(newsocket, SIGNAL(readyRead()), this, SLOT(localServerReadyRead()));
+}
+
+QString addSlashes(QString str)
+{
+    QString newStr;
+    for(int i=0;i<str.length();i++)
+     {
+
+        if(str[i] == '\0')
+         {
+           newStr.append('\\');
+           newStr.append('0');
+         }
+        else if(str[i] == '\'')
+         {
+            newStr.append('\'');
+         }
+        else if(str[i] == '\"')
+         {
+            newStr.append('\"');
+         }
+        else if(str[i] == '\\')
+         {
+            newStr.append('\\');
+         }
+        else
+           newStr.append(str[i]);
+
+     }
+    return newStr;
+}
+
+void HtmlWindow::localServerReadyRead()
+{
+    qDebug() << "readyread!" ;
+
+    QLocalSocket *local = static_cast<QLocalSocket *>(sender());
+    if (!local)
+    {
+        qDebug() << "missing client socket!" ;
+        return;
+    }
+
+    QTextStream in(local);
+    QString readMsg;
+    // 读出数据
+    readMsg = in.readAll();
+    qDebug() << "readed: " << local->objectName() << readMsg ;
+
+    mainFrame()->evaluateJavaScript(
+                QString("onKateLocalServerReceive(\"%1\",\"%2\") ;")
+                    .arg(addSlashes(local->objectName()))
+                    .arg(addSlashes(readMsg))
+    ) ;
+}
